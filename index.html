@@ -48,10 +48,19 @@
               type="button"
               id="ingredients-dropdown"
               data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
               Ingrédients
             </button>
-            <ul class="dropdown-menu" id="ingredients-list"></ul>
+            <div class="dropdown-menu" aria-labelledby="ingredients-dropdown">
+              <input
+                type="text"
+                class="dropdown-search"
+                placeholder="Rechercher un ingrédient"
+              />
+              <div class="dropdown-divider"></div>
+              <ul id="ingredients-list"></ul>
+            </div>
           </div>
           <div class="dropdown">
             <button
@@ -59,10 +68,19 @@
               type="button"
               id="appliances-dropdown"
               data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
               Appareils
             </button>
-            <ul class="dropdown-menu" id="appliances-list"></ul>
+            <div class="dropdown-menu" aria-labelledby="appliances-dropdown">
+              <input
+                type="text"
+                class="dropdown-search"
+                placeholder="Rechercher un appareil"
+              />
+              <div class="dropdown-divider"></div>
+              <ul id="appliances-list"></ul>
+            </div>
           </div>
           <div class="dropdown">
             <button
@@ -70,10 +88,19 @@
               type="button"
               id="ustensils-dropdown"
               data-bs-toggle="dropdown"
+              aria-expanded="false"
             >
               Ustensiles
             </button>
-            <ul class="dropdown-menu" id="ustensils-list"></ul>
+            <div class="dropdown-menu" aria-labelledby="ustensils-dropdown">
+              <input
+                type="text"
+                class="dropdown-search"
+                placeholder="Rechercher un ustensile"
+              />
+              <div class="dropdown-divider"></div>
+              <ul id="ustensils-list"></ul>
+            </div>
           </div>
         </div>
         <div class="recipes-count">

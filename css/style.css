@@ -109,6 +109,42 @@ body {
     background-color: #fff;
     }
 
+    .dropdown-menu {
+        padding: 10px;
+        min-width: 200px;
+      }
+      
+      .dropdown-search {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .dropdown-menu ul {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0;
+        list-style-type: none;
+      }
+      
+      .dropdown-item {
+        cursor: pointer;
+        padding: 5px;
+      }
+      
+      .dropdown-item:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .dropdown-item.selected {
+        background-color: #FFD15B;
+      }
+      .dropdown-item.single-match {
+        background-color: #FFD15B;
+      }
+
 .recipes-count {
     font-weight: bold;
     font-size: 1.2rem;
