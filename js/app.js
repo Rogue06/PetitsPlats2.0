@@ -66,36 +66,41 @@ function updateRecipesCount(count) {
 function searchRecipesNative(query) {
   query = sanitizeInput(query.toLowerCase().trim());
 
-  let filteredRecipes = recipes;
+  let filteredRecipes = [];
 
   // Filtrer par tags d'abord
-  filteredRecipes = filteredRecipes.filter((recipe) =>
-    recipeMatchesTags(recipe)
-  );
+  for (let i = 0; i < recipes.length; i++) {
+    if (recipeMatchesTags(recipes[i])) {
+      filteredRecipes.push(recipes[i]);
+    }
+  }
 
   // Si la requête a au moins 3 caractères, filtrer également par la recherche
   if (query.length >= 3) {
-    filteredRecipes = filteredRecipes.filter((recipe) =>
-      recipeMatchesSearch(recipe, query)
-    );
+    let searchFilteredRecipes = [];
+    for (let i = 0; i < filteredRecipes.length; i++) {
+      if (recipeMatchesSearch(filteredRecipes[i], query)) {
+        searchFilteredRecipes.push(filteredRecipes[i]);
+      }
+    }
+    filteredRecipes = searchFilteredRecipes;
   }
 
   displayRecipes(filteredRecipes);
   updateAdvancedSearchFields(filteredRecipes);
+  updateRecipesCount(filteredRecipes.length);
 }
 
-// Fonction pour vérifier si une recette correspond à la recherche
 function recipeMatchesSearch(recipe, query) {
-  return (
-    recipe.name.toLowerCase().includes(query) ||
-    recipe.description.toLowerCase().includes(query) ||
-    recipe.ingredients.some((ing) =>
-      ing.ingredient.toLowerCase().includes(query)
-    )
-  );
+  if (recipe.name.toLowerCase().includes(query)) return true;
+  if (recipe.description.toLowerCase().includes(query)) return true;
+  for (let i = 0; i < recipe.ingredients.length; i++) {
+    if (recipe.ingredients[i].ingredient.toLowerCase().includes(query))
+      return true;
+  }
+  return false;
 }
 
-// Fonction pour vérifier si une recette correspond aux tags
 function recipeMatchesTags(recipe) {
   for (const [type, tags] of Object.entries(currentTags)) {
     for (let i = 0; i < tags.length; i++) {
@@ -103,13 +108,21 @@ function recipeMatchesTags(recipe) {
       let found = false;
 
       if (type === "ingredients") {
-        found = recipe.ingredients.some((ing) =>
-          ing.ingredient.toLowerCase().includes(tag)
-        );
+        for (let j = 0; j < recipe.ingredients.length; j++) {
+          if (recipe.ingredients[j].ingredient.toLowerCase().includes(tag)) {
+            found = true;
+            break;
+          }
+        }
       } else if (type === "appliances") {
         found = recipe.appliance.toLowerCase().includes(tag);
       } else if (type === "ustensils") {
-        found = recipe.ustensils.some((ust) => ust.toLowerCase().includes(tag));
+        for (let j = 0; j < recipe.ustensils.length; j++) {
+          if (recipe.ustensils[j].toLowerCase().includes(tag)) {
+            found = true;
+            break;
+          }
+        }
       }
 
       if (!found) return false;
@@ -117,60 +130,8 @@ function recipeMatchesTags(recipe) {
   }
   return true;
 }
-// Fonction pour initialiser les dropdowns
-function initializeDropdowns() {
-  const dropdowns = ["ingredients", "appliances", "ustensils"];
-  dropdowns.forEach((type) => {
-    const dropdown = document.querySelector(`#${type}-dropdown`);
-    const searchInput = dropdown.querySelector(".dropdown-search");
-    const list = document.getElementById(`${type}-list`);
 
-    if (!searchInput || !list) {
-      console.error(`Elements not found for ${type} dropdown`);
-      return;
-    }
-
-    // Populate initial list
-    updateDropdownList(`${type}-list`, getUniqueItems(type));
-
-    // Add search functionality
-    searchInput.addEventListener("input", (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      const items = getUniqueItems(type);
-      let filteredItems = items;
-
-      if (searchTerm.length >= 3) {
-        filteredItems = items.filter((item) =>
-          item.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      updateDropdownList(
-        `${type}-list`,
-        filteredItems,
-        filteredItems.length === 1
-      );
-    });
-  });
-}
-// Fonction pour mettre à jour la liste d'un dropdown
-function getUniqueItems(type) {
-  const items = new Set();
-  recipes.forEach((recipe) => {
-    if (type === "ingredients") {
-      recipe.ingredients.forEach((ing) =>
-        items.add(ing.ingredient.toLowerCase())
-      );
-    } else if (type === "appliances") {
-      items.add(recipe.appliance.toLowerCase());
-    } else if (type === "ustensils") {
-      recipe.ustensils.forEach((ust) => items.add(ust.toLowerCase()));
-    }
-  });
-  return Array.from(items);
-}
-
-// Fonction pour mettre à jour les champs de recherche avancée
+// Fonction pour mettre à jour les champs de recherche avancées
 function updateAdvancedSearchFields(filteredRecipes) {
   const ingredients = new Set();
   const appliances = new Set();
@@ -187,22 +148,68 @@ function updateAdvancedSearchFields(filteredRecipes) {
     }
   }
 
-  updateDropdownList("ingredients-list", Array.from(ingredients));
-  updateDropdownList("appliances-list", Array.from(appliances));
-  updateDropdownList("ustensils-list", Array.from(ustensils));
+  updateDropdownList("ingredients", Array.from(ingredients));
+  updateDropdownList("appliances", Array.from(appliances));
+  updateDropdownList("ustensils", Array.from(ustensils));
 }
 
+// Fonction pour mettre à jour la liste d'un dropdown
+function getUniqueItems(type) {
+  const items = new Set();
+  recipes.forEach((recipe) => {
+    if (type === "ingredients") {
+      recipe.ingredients.forEach((ing) =>
+        items.add(ing.ingredient.toLowerCase())
+      );
+    } else if (type === "appliances") {
+      items.add(recipe.appliance.toLowerCase());
+    } else if (type === "ustensils") {
+      recipe.ustensils.forEach((ust) => items.add(ust.toLowerCase()));
+    }
+  });
+  const result = Array.from(items);
+  console.log(`getUniqueItems for ${type}:`, result); // Log pour vérifier
+  return result;
+}
+
+// Fonction pour mettre à jour les champs de recherche avancées
+
 // Fonction pour mettre à jour un dropdown
-function updateDropdownList(id, items, singleMatch = false) {
-  const list = document.getElementById(id);
-  const type = id.split("-")[0];
+function updateDropdownList(type, items) {
+  const dropdownMap = {
+    ingredients: "Ingrédients",
+    appliances: "Appareils",
+    ustensils: "Ustensiles",
+  };
+
+  const dropdowns = document.querySelectorAll(".dropdown");
+  let dropdown;
+  for (let i = 0; i < dropdowns.length; i++) {
+    if (dropdowns[i].textContent.trim().includes(dropdownMap[type])) {
+      dropdown = dropdowns[i];
+      break;
+    }
+  }
+
+  if (!dropdown) {
+    console.error(`Dropdown not found for ${type}`);
+    return;
+  }
+
+  let list = dropdown.querySelector("ul");
+  if (!list) {
+    list = document.createElement("ul");
+    list.id = `${type}-list`;
+    dropdown.querySelector(".dropdown-menu").appendChild(list);
+  }
+
   list.innerHTML = "";
 
   items.forEach((item) => {
     const li = document.createElement("li");
     const isSelected = currentTags[type].includes(item.toLowerCase());
-    li.innerHTML = `<a class="dropdown-item${isSelected ? " selected" : ""}${
-      singleMatch ? " single-match" : ""
+    li.innerHTML = `<a class="dropdown-item${
+      isSelected ? " selected" : ""
     }" href="#">${sanitizeInput(item)}</a>`;
 
     li.firstChild.addEventListener("click", (e) => {
@@ -213,11 +220,92 @@ function updateDropdownList(id, items, singleMatch = false) {
       } else {
         addTag(type, value);
       }
-      updateDropdownList(id, getUniqueItems(type));
-      document.querySelector(`#${type}-dropdown .dropdown-search`).value = "";
+      const searchInput = dropdown.querySelector(".dropdown-search");
+      if (searchInput) {
+        searchInput.value = "";
+      }
+      updateDropdownList(type, getUniqueItems(type));
     });
 
     list.appendChild(li);
+  });
+}
+
+// Fonction pour initialiser tous les dropdowns
+function initializeDropdowns() {
+  const dropdowns = document.querySelectorAll(".dropdown");
+  console.log("Dropdowns found:", dropdowns.length);
+
+  dropdowns.forEach((dropdown) => {
+    const type = dropdown.textContent.trim().toLowerCase();
+    let mappedType;
+    if (type.includes("ingrédients")) mappedType = "ingredients";
+    else if (type.includes("appareils")) mappedType = "appliances";
+    else if (type.includes("ustensiles")) mappedType = "ustensils";
+    else return;
+
+    console.log(`Initializing dropdown:`, mappedType);
+
+    let dropdownMenu = dropdown.querySelector(".dropdown-menu");
+    if (!dropdownMenu) {
+      console.error(`Dropdown menu not found for ${mappedType}`);
+      return;
+    }
+
+    // Ajouter un gestionnaire d'événements pour ouvrir/fermer le menu
+    dropdown.addEventListener("click", (e) => {
+      if (e.target.closest(".dropdown-menu")) return; // Ne pas fermer si on clique dans le menu
+      dropdownMenu.classList.toggle("show");
+    });
+
+    // Fermer le menu si on clique en dehors
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdownMenu.classList.remove("show");
+      }
+    });
+
+    let searchInput = dropdownMenu.querySelector(".dropdown-search");
+    if (!searchInput) {
+      searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.className = "dropdown-search";
+      searchInput.placeholder = `Rechercher un ${mappedType.slice(0, -1)}`;
+      dropdownMenu.insertBefore(searchInput, dropdownMenu.firstChild);
+      console.log(`Created new search input for ${mappedType}`);
+    }
+
+    let list = dropdownMenu.querySelector(`ul`);
+    if (!list) {
+      list = document.createElement("ul");
+      list.id = `${mappedType}-list`;
+      dropdownMenu.appendChild(list);
+      console.log(`Created new list for ${mappedType}`);
+    }
+
+    const allItems = getUniqueItems(mappedType);
+
+    searchInput.addEventListener("input", function () {
+      console.log(`Search input event triggered for ${mappedType}`);
+      console.log(`Search term: "${this.value}"`);
+
+      const searchTerm = this.value.toLowerCase();
+      let filteredItems = allItems;
+
+      if (searchTerm.length > 0) {
+        filteredItems = allItems.filter((item) =>
+          item.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      console.log(`Filtered items for ${mappedType}:`, filteredItems);
+      updateDropdownList(mappedType, filteredItems);
+    });
+
+    console.log(`Event listener added to search input for ${mappedType}`);
+
+    // Initial update of the dropdown list
+    updateDropdownList(mappedType, allItems);
   });
 }
 
@@ -277,17 +365,17 @@ function sanitizeInput(input) {
 // Fonction d'initialisation
 function init() {
   displayRecipes(recipes);
+  initializeDropdowns(); // Appel direct, sans setTimeout
   updateAdvancedSearchFields(recipes);
 
-  // Assurez-vous que tous les éléments du DOM sont chargés avant d'initialiser les dropdowns
-  setTimeout(() => {
-    initializeDropdowns();
-  }, 0);
-
   const mainSearch = document.getElementById("main-search");
-  mainSearch.addEventListener("input", (e) =>
-    searchRecipesNative(e.target.value)
-  );
+  if (mainSearch) {
+    mainSearch.addEventListener("input", (e) =>
+      searchRecipesNative(e.target.value)
+    );
+  } else {
+    console.error("Main search input not found");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);

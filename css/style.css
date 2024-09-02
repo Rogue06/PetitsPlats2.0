@@ -99,6 +99,7 @@ body {
 .dropdown-toggle {
     background-color: white;
     color: black;
+    border-radius: 15px;
     border: none;
     padding: 10px 20px;
     min-width: 170px;
@@ -112,6 +113,10 @@ body {
     .dropdown-menu {
         padding: 10px;
         min-width: 200px;
+      }
+
+      .dropdown-menu.show {
+        display: block;
       }
       
       .dropdown-search {
