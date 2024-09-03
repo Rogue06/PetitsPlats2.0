@@ -62,7 +62,7 @@ function updateRecipesCount(count) {
   recipesNumberElement.textContent = count;
 }
 
-// Fonction de recherche utilisant des boucles natives
+// Fonction de recherche utilisant des boucles FOR
 function searchRecipesNative(query) {
   query = sanitizeInput(query.toLowerCase().trim());
 
