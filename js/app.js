@@ -66,24 +66,14 @@ function updateRecipesCount(count) {
 function searchRecipesNative(query) {
   query = sanitizeInput(query.toLowerCase().trim());
 
-  let filteredRecipes = [];
-
   // Filtrer par tags d'abord
-  for (let i = 0; i < recipes.length; i++) {
-    if (recipeMatchesTags(recipes[i])) {
-      filteredRecipes.push(recipes[i]);
-    }
-  }
+  let filteredRecipes = recipes.filter((recipe) => recipeMatchesTags(recipe));
 
   // Si la requête a au moins 3 caractères, filtrer également par la recherche
   if (query.length >= 3) {
-    let searchFilteredRecipes = [];
-    for (let i = 0; i < filteredRecipes.length; i++) {
-      if (recipeMatchesSearch(filteredRecipes[i], query)) {
-        searchFilteredRecipes.push(filteredRecipes[i]);
-      }
-    }
-    filteredRecipes = searchFilteredRecipes;
+    filteredRecipes = filteredRecipes.filter((recipe) =>
+      recipeMatchesSearch(recipe, query)
+    );
   }
 
   displayRecipes(filteredRecipes);
@@ -92,43 +82,35 @@ function searchRecipesNative(query) {
 }
 
 function recipeMatchesSearch(recipe, query) {
-  if (recipe.name.toLowerCase().includes(query)) return true;
-  if (recipe.description.toLowerCase().includes(query)) return true;
-  for (let i = 0; i < recipe.ingredients.length; i++) {
-    if (recipe.ingredients[i].ingredient.toLowerCase().includes(query))
-      return true;
-  }
-  return false;
+  return (
+    recipe.name.toLowerCase().includes(query) ||
+    recipe.description.toLowerCase().includes(query) ||
+    recipe.ingredients.some((ing) =>
+      ing.ingredient.toLowerCase().includes(query)
+    )
+  );
 }
 
 function recipeMatchesTags(recipe) {
-  for (const [type, tags] of Object.entries(currentTags)) {
-    for (let i = 0; i < tags.length; i++) {
-      const tag = tags[i].toLowerCase();
-      let found = false;
-
-      if (type === "ingredients") {
-        for (let j = 0; j < recipe.ingredients.length; j++) {
-          if (recipe.ingredients[j].ingredient.toLowerCase().includes(tag)) {
-            found = true;
-            break;
-          }
-        }
-      } else if (type === "appliances") {
-        found = recipe.appliance.toLowerCase().includes(tag);
-      } else if (type === "ustensils") {
-        for (let j = 0; j < recipe.ustensils.length; j++) {
-          if (recipe.ustensils[j].toLowerCase().includes(tag)) {
-            found = true;
-            break;
-          }
-        }
+  return Object.entries(currentTags).every(([type, tags]) =>
+    tags.every((tag) => {
+      const lowerTag = tag.toLowerCase();
+      switch (type) {
+        case "ingredients":
+          return recipe.ingredients.some((ing) =>
+            ing.ingredient.toLowerCase().includes(lowerTag)
+          );
+        case "appliances":
+          return recipe.appliance.toLowerCase().includes(lowerTag);
+        case "ustensils":
+          return recipe.ustensils.some((ust) =>
+            ust.toLowerCase().includes(lowerTag)
+          );
+        default:
+          return true;
       }
-
-      if (!found) return false;
-    }
-  }
-  return true;
+    })
+  );
 }
 
 // Fonction pour mettre à jour les champs de recherche avancées
@@ -304,7 +286,7 @@ function initializeDropdowns() {
 
     console.log(`Event listener added to search input for ${mappedType}`);
 
-    // Initial update of the dropdown list
+    // Mettre à jour la liste au chargement de la page
     updateDropdownList(mappedType, allItems);
   });
 }
