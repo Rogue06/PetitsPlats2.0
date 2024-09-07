@@ -62,8 +62,8 @@ function updateRecipesCount(count) {
   recipesNumberElement.textContent = count;
 }
 
-// Fonction de recherche utilisant des boucles FOR
-function searchRecipesNative(query) {
+// Fonction de recherche utilisant Filter
+function searchRecipesFilter(query) {
   query = sanitizeInput(query.toLowerCase().trim());
 
   // Filtrer par tags d'abord
@@ -283,7 +283,7 @@ function addTag(type, value) {
   if (!currentTags[type].includes(value)) {
     currentTags[type].push(value);
     displayTags();
-    searchRecipesNative(document.getElementById("main-search").value);
+    searchRecipesFilter(document.getElementById("main-search").value);
   }
 }
 
@@ -294,7 +294,7 @@ function removeTag(type, value) {
   if (index > -1) {
     currentTags[type].splice(index, 1);
     displayTags();
-    searchRecipesNative(document.getElementById("main-search").value);
+    searchRecipesFilter(document.getElementById("main-search").value);
   }
 }
 
@@ -339,7 +339,7 @@ function init() {
   const mainSearch = document.getElementById("main-search");
   if (mainSearch) {
     mainSearch.addEventListener("input", (e) =>
-      searchRecipesNative(e.target.value)
+      searchRecipesFilter(e.target.value)
     );
   } else {
     console.error("Main search input not found");
