@@ -168,7 +168,6 @@ function getUniqueItems(type) {
     }
   });
   const result = Array.from(items);
-  console.log(`getUniqueItems for ${type}:`, result); // Log pour vérifier
   return result;
 }
 
@@ -234,7 +233,6 @@ function updateDropdownList(type, items) {
 // Fonction pour initialiser tous les dropdowns
 function initializeDropdowns() {
   const dropdowns = document.querySelectorAll(".dropdown");
-  console.log("Dropdowns found:", dropdowns.length);
 
   dropdowns.forEach((dropdown) => {
     const type = dropdown.textContent.trim().toLowerCase();
@@ -243,8 +241,6 @@ function initializeDropdowns() {
     else if (type.includes("appareils")) mappedType = "appliances";
     else if (type.includes("ustensiles")) mappedType = "ustensils";
     else return;
-
-    console.log(`Initializing dropdown:`, mappedType);
 
     let dropdownMenu = dropdown.querySelector(".dropdown-menu");
     if (!dropdownMenu) {
@@ -272,7 +268,6 @@ function initializeDropdowns() {
       searchInput.className = "dropdown-search";
       searchInput.placeholder = `Rechercher un ${mappedType.slice(0, -1)}`;
       dropdownMenu.insertBefore(searchInput, dropdownMenu.firstChild);
-      console.log(`Created new search input for ${mappedType}`);
     }
 
     let list = dropdownMenu.querySelector(`ul`);
@@ -280,15 +275,11 @@ function initializeDropdowns() {
       list = document.createElement("ul");
       list.id = `${mappedType}-list`;
       dropdownMenu.appendChild(list);
-      console.log(`Created new list for ${mappedType}`);
     }
 
     const allItems = getUniqueItems(mappedType);
 
     searchInput.addEventListener("input", function () {
-      console.log(`Search input event triggered for ${mappedType}`);
-      console.log(`Search term: "${this.value}"`);
-
       const searchTerm = this.value.toLowerCase();
       let filteredItems = allItems;
 
@@ -297,12 +288,8 @@ function initializeDropdowns() {
           item.toLowerCase().includes(searchTerm)
         );
       }
-
-      console.log(`Filtered items for ${mappedType}:`, filteredItems);
       updateDropdownList(mappedType, filteredItems);
     });
-
-    console.log(`Event listener added to search input for ${mappedType}`);
 
     // Initial update of the dropdown list
     updateDropdownList(mappedType, allItems);
