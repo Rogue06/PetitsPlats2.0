@@ -90,7 +90,7 @@ function searchRecipesNative(query) {
   updateAdvancedSearchFields(filteredRecipes);
   updateRecipesCount(filteredRecipes.length);
 }
-
+// Fonction vérifie si une recette correspond à la requête
 function recipeMatchesSearch(recipe, query) {
   if (recipe.name.toLowerCase().includes(query)) return true;
   if (recipe.description.toLowerCase().includes(query)) return true;
@@ -100,7 +100,7 @@ function recipeMatchesSearch(recipe, query) {
   }
   return false;
 }
-
+// Fonction vérifie si une recette correspond de tags
 function recipeMatchesTags(recipe) {
   for (const [type, tags] of Object.entries(currentTags)) {
     for (let i = 0; i < tags.length; i++) {
@@ -171,8 +171,6 @@ function getUniqueItems(type) {
   return result;
 }
 
-// Fonction pour mettre à jour les champs de recherche avancées
-
 // Fonction pour mettre à jour un dropdown
 function updateDropdownList(type, items) {
   const dropdownMap = {
@@ -201,7 +199,7 @@ function updateDropdownList(type, items) {
     list.id = `${type}-list`;
     dropdown.querySelector(".dropdown-menu").appendChild(list);
   }
-
+// Supprimer tous les éléments de la liste
   list.innerHTML = "";
 
   items.forEach((item) => {
@@ -230,7 +228,7 @@ function updateDropdownList(type, items) {
   });
 }
 
-// Fonction pour initialiser tous les dropdowns
+// Fonction pour initialiser tous les dropdowns (Menus déroulants)
 function initializeDropdowns() {
   const dropdowns = document.querySelectorAll(".dropdown");
 
@@ -291,7 +289,7 @@ function initializeDropdowns() {
       updateDropdownList(mappedType, filteredItems);
     });
 
-    // Initial update of the dropdown list
+    // Mise à jour initiale de la liste déroulante
     updateDropdownList(mappedType, allItems);
   });
 }
@@ -317,7 +315,7 @@ function removeTag(type, value) {
   }
 }
 
-// Fonction pour afficher les tags
+// Fonction pour afficher les tags sélectionnés sous la barre de recherche principale
 function displayTags() {
   const tagsContainer = document.getElementById("selected-tags");
   tagsContainer.innerHTML = "";
@@ -349,7 +347,7 @@ function sanitizeInput(input) {
   return div.innerHTML;
 }
 
-// Fonction d'initialisation
+// Fonction d'initialisation (dropdowns, tags, etc...)
 function init() {
   displayRecipes(recipes);
   initializeDropdowns(); // Appel direct, sans setTimeout
