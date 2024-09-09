@@ -80,7 +80,7 @@ function searchRecipesFilter(query) {
   updateAdvancedSearchFields(filteredRecipes);
   updateRecipesCount(filteredRecipes.length);
 }
-
+// Fonction vérifie si une recette correspond à la requête de recherche 
 function recipeMatchesSearch(recipe, query) {
   return (
     recipe.name.toLowerCase().includes(query) ||
@@ -90,7 +90,7 @@ function recipeMatchesSearch(recipe, query) {
     )
   );
 }
-
+// Fonction vérifie si une recette correspond aux tags selectionnés
 function recipeMatchesTags(recipe) {
   return Object.entries(currentTags).every(([type, tags]) =>
     tags.every((tag) => {
@@ -152,8 +152,6 @@ function getUniqueItems(type) {
   const result = Array.from(items);
   return result;
 }
-
-// Fonction pour mettre à jour les champs de recherche avancées
 
 // Fonction pour mettre à jour un dropdown
 function updateDropdownList(type, items) {
