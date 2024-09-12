@@ -199,7 +199,7 @@ function updateDropdownList(type, items) {
     list.id = `${type}-list`;
     dropdown.querySelector(".dropdown-menu").appendChild(list);
   }
-// Supprimer tous les éléments de la liste
+  // Supprimer tous les éléments de la liste
   list.innerHTML = "";
 
   items.forEach((item) => {
@@ -221,7 +221,7 @@ function updateDropdownList(type, items) {
       if (searchInput) {
         searchInput.value = "";
       }
-      updateDropdownList(type, getUniqueItems(type));
+      searchRecipesNative(document.getElementById("main-search").value);
     });
 
     list.appendChild(li);
@@ -337,7 +337,7 @@ function displayTags() {
 // Fonction pour afficher un message quand aucune recette n'est trouvée
 function displayNoResults() {
   const container = document.getElementById("recipes-container");
-  container.innerHTML = `<p>Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.</p>`;
+  container.innerHTML = `<p>Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson ��, etc.</p>`;
 }
 
 // Fonction pour nettoyer les entrées utilisateur
