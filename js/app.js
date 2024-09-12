@@ -80,7 +80,7 @@ function searchRecipesFilter(query) {
   updateAdvancedSearchFields(filteredRecipes);
   updateRecipesCount(filteredRecipes.length);
 }
-// Fonction vérifie si une recette correspond à la requête de recherche 
+// Fonction vérifie si une recette correspond à la requête de recherche
 function recipeMatchesSearch(recipe, query) {
   return (
     recipe.name.toLowerCase().includes(query) ||
@@ -203,7 +203,7 @@ function updateDropdownList(type, items) {
       if (searchInput) {
         searchInput.value = "";
       }
-      updateDropdownList(type, getUniqueItems(type));
+      searchRecipesFilter(document.getElementById("main-search").value);
     });
 
     list.appendChild(li);
