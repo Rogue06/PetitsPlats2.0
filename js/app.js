@@ -337,7 +337,7 @@ function displayTags() {
 // Fonction pour afficher un message quand aucune recette n'est trouvée
 function displayNoResults() {
   const container = document.getElementById("recipes-container");
-  container.innerHTML = `<p>Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson ��, etc.</p>`;
+  container.innerHTML = `<p>Aucune recette ne correspond à votre critère… vous pouvez chercher « tarte aux pommes », « poisson », etc.</p>`;
 }
 
 // Fonction pour nettoyer les entrées utilisateur
